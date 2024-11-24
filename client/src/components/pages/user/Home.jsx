@@ -14,6 +14,8 @@ import cat6 from '../../../assets/cat-6.png'
 import cat7 from '../../../assets/cat-7.png'
 import cat8 from '../../../assets/cat-8.png'
 import { useNavigate } from 'react-router'
+import { useSelector } from 'react-redux'
+import { selectUser } from '../../../redux/userSlice';
 
 
 
@@ -44,6 +46,7 @@ export default function Login() {
   const [searchQuery, setSearchQuery] = useState('')
 
   const navigate=useNavigate();
+  const user = useSelector(selectUser);
 
   return (
     <div className="min-h-screen bg-white">
@@ -64,14 +67,35 @@ export default function Login() {
             <Search className="absolute top-2.5 left-3 text-gray-400" size={20} />
           </div>
         </div>
-        <div className="flex items-center gap-4">
-          <button onClick={()=>navigate('/signup')} className="px-4 py-2 text-orange-500 rounded-md transition-colors hover:text-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500">
-            Create Account
-          </button>
-          <button onClick={()=>navigate('/login')} className="px-4 py-2 text-white bg-orange-500 rounded-md transition-colors hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500">
-            Sign In
-          </button>
-        </div>
+
+        {
+          (!user)? (<div className="flex items-center gap-4">
+            <button onClick={()=>navigate('/signup')} className="px-4 py-2 text-orange-500 rounded-md transition-colors hover:text-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500">
+              Create Account
+            </button>
+            <button onClick={()=>navigate('/login')} className="px-4 py-2 text-white bg-orange-500 rounded-md transition-colors hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500">
+              Sign In
+            </button>
+          </div>
+  ) : (<div className="flex items-center gap-4">
+
+    <button  className="px-1 py-2  rounded-md ">
+      <i class="ri-notification-2-line"></i>
+      </button>
+      <button  className="px-1 py-2 rounded-md ">
+      <i class="ri-heart-line"></i>
+      </button>
+      <button  className="px-1 py-2  rounded-md ">
+      <i class="ri-shopping-cart-line"></i>
+      </button>
+      <img className='h-8 w-8 rounded-full' src="user.profileImg" alt="" />
+     
+    </div>)
+        }
+       
+        
+
+        
       </nav>
 
       <main className="container mx-auto px-10 py-10">

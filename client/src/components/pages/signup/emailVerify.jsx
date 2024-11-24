@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -16,7 +14,6 @@ export default function EmailVerify({ formData, setIsModalVisible }) {
         newOtp[index] = value;
         setOtp(newOtp);
   
-        // Move focus to the next input
         if (value && index < 5) {
           document.getElementById(`otp-input-${index + 1}`).focus();
         }
@@ -24,7 +21,6 @@ export default function EmailVerify({ formData, setIsModalVisible }) {
     };
   
     const handleKeyDown = (index, e) => {
-      // Move focus to the previous input on backspace
       if (e.key === 'Backspace' && !otp[index] && index > 0) {
         document.getElementById(`otp-input-${index - 1}`).focus();
       }
@@ -41,23 +37,33 @@ export default function EmailVerify({ formData, setIsModalVisible }) {
       try {
         setLoading(true);
         
-
-        const response = await axios.post('http://localhost:3000/user/create', {
-          name: `${formData.firstName} ${formData.lastName}`,
+        // Create request payload
+        const requestPayload = {
+          userName: formData.username,
+          fullName: `${formData.firstName} ${formData.lastName}`,
           email: formData.email,
           password: formData.password,
-          username: formData.username,
           otp: otpString
-        });
-      
-        if (response.data.success) {
+        };
+
+       
+
+        const response = await axios.post('http://localhost:3000/user/create', requestPayload);
+    
+       
+          
           toast.success('Account created successfully!');
           setIsModalVisible(false);
           navigate('/login');
-        }
+        
+       
       } catch (error) {
+        // Enhanced error logging
+        console.error('Full error:', error);
+        console.error('Response data:', error.response?.data);
+        console.error('Request payload:', requestPayload);
+        
         toast.error(error.response?.data?.message || 'Failed to verify OTP');
-        console.log(error.message)
       } finally {
         setLoading(false);
       }

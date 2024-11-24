@@ -129,7 +129,7 @@ export default function Signup() {
         </div>
         <div>
           <span className="text-gray-500 mr-2">Already have an account?</span>
-          <button onClick={() => toast.success("mission success")} className="text-orange-500 font-semibold hover:underline">
+          <button onClick={() => navigate('/login')} className="text-orange-500 font-semibold hover:underline">
             Sign In
           </button>
         </div>

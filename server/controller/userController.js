@@ -49,16 +49,27 @@ const securePassword = async (password) => bcrypt.hash(password, 10);
 
 const signUp = async (req, res) => {
     try {
-        console.log(req.body)
-        const { name, password, email, phone } = req.body;
+        console.log(req.body);
+        const { userName, fullName, password, email, phone } = req.body;  // Updated field names
+        
         const userExists = await User.findOne({ email });
-        if (userExists) return res.status(409).json({ message: "User already exists" });
-
+        if (userExists) {
+            return res.status(409).json({ message: "User already exists" });
+        }
+        
         const userId = await generateUniqueUserId();
         const passwordHash = await securePassword(password);
+        
         const newUser = await User.create({
-            name, password: passwordHash, email, phone, role: "student", user_id: userId
+            userName,      
+            fullName,    
+            password: passwordHash,
+            email,
+            phone,
+            role: "student",
+            user_id: userId
         });
+       
         res.status(200).json({ message: "User is registered", userData: newUser });
     } catch (error) {
         console.error("Error in signUp:", error);

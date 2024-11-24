@@ -1,24 +1,57 @@
 import React, { useState } from 'react';
-import logo from '../../../assets/logo_cap.png'
-import illustration from '../../../assets/login_ill.png'
-import google_logo from '../../../assets/google_icon.png'
-
+import axios from 'axios'; // Add this import // Add this if you're using toast
+import logo from '../../../assets/logo_cap.png';
+import illustration from '../../../assets/login_ill.png';
+import google_logo from '../../../assets/google_icon.png';
 import { useNavigate } from 'react-router';
+import { toast,ToastContainer } from 'react-toastify';
+import { useDispatch } from 'react-redux';
+import { addUser } from '../../../redux/userSlice';
 
 const Login = () => {
 
-  const [email,setEmail]=useState('')
-  const [password,setPassword]=useState('')
-  const [showPassword,setShowPassword]=useState(false);
+  const dispatch=useDispatch()
 
-  const navigate=useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
   
-  
+  const handleLogin = async (e) => {
+    e.preventDefault(); // Prevent form submission refresh
+    
+    try {
+      const response = await axios.post('http://localhost:3000/user/login', {
+        email,
+        password
+      });
+      
+      // Check if login was successful
+      if (response.status === 200) {
 
+        dispatch(addUser(response.data.userData)); // adding user data to the store
+
+        toast.success('Logged In Successfully!');
+        
+        // You might want to save the token if your backend sends one
+        if (response.data.token) {
+          localStorage.setItem('token', response.data.token);
+        }
+        
+       setTimeout(() => {
+        navigate('/');
+       }, 1000); 
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      toast.error(error.response?.data?.message || 'Login failed. Please try again.');
+    }
+  };
  
 
   return (
     <>
+    <ToastContainer/>
      <header className="flex justify-around items-center mb-8">
           {/* Logo */}
           <div className="text-3xl font-bold text-gray-700 flex items-center">
@@ -51,7 +84,7 @@ const Login = () => {
         {/* Sign In Form */}
         <div className="max-w-md mx-auto w-full">
           <h2 className="text-2xl font-semibold text-gray-800 mb-6">Sign in to your account</h2>
-          <form  className="space-y-5">
+          <form onSubmit={handleLogin} className="space-y-5">
             <div>
               <label className="block text-gray-600 mb-2">Email</label>
               <input
@@ -87,7 +120,7 @@ const Login = () => {
               <label htmlFor="remember" className="text-gray-600">Remember me</label>
             </div>
 
-            <button className="w-full py-2 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-600">
+            <button type='submit' className="w-full py-2 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-600">
               Sign In
             </button>
           </form>
